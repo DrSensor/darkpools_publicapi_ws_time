@@ -21,7 +21,7 @@ fn is_debugging() -> bool {
 }
 
 #[derive(Clone)]
-pub struct ServiceConfig {
+pub(crate) struct ServiceConfig {
     pub debug_build: bool,
     pub executable_name: String,
     pub max_clients: u32,
