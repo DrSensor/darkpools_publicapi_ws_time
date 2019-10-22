@@ -1,0 +1,7 @@
+[package]
+name = "darkpools_publicapi_ws_time"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+bitwyre_ws_core = { git = 'https://github.com/bitwyre/websocket_core', branch = 'master' }
