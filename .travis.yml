@@ -3,4 +3,6 @@ language: rust
 rust:
   - stable
 script:
-  - cargo build --verbose --all
+  - chmod +x run.sh
+  - ./run.sh lint
+  - ./run.sh test
