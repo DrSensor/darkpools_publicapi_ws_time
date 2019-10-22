@@ -59,7 +59,6 @@ fi
 # Section: Rust components and mandatory cargo crates (system-wide!)
 
 command_exists_or_die "rustup"
-command_exists_or_die "valgrind"
 rustup default stable
 rustup update
 rust_add "rustc"
@@ -70,5 +69,4 @@ rust_add "cargo"
 rust_add "clippy"
 rust_add "rustfmt"
 cargo_utilities "cargo-audit"
-cargo_utilities "cargo-valgrind"
 echo -e "\e[1mdone.\e[0m"

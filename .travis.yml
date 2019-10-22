@@ -3,6 +3,8 @@ language: rust
 rust:
   - stable
 script:
+  - chmod +x dev-setup.sh
   - chmod +x run.sh
+  - ./dev-setup.sh
   - ./run.sh lint
   - ./run.sh test

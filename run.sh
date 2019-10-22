@@ -43,9 +43,6 @@ lint)
 '')
     cargo run
     ;;
-memcheck)
-    cargo profiler callgrind --release
-    ;;
 audit)
     cargo audit
     ;;
