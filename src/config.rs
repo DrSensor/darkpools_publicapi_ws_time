@@ -11,12 +11,12 @@ const ENV_SERVICE_PATH: &str = "SERVICE_PATH";
 const ENV_PING_LIMIT_MS: &str = "PING_LIMIT_MS";
 
 #[cfg(debug_assertions)]
-fn is_debugging() -> bool {
+pub(crate) fn is_debugging() -> bool {
     true
 }
 
 #[cfg(not(debug_assertions))]
-fn is_debugging() -> bool {
+pub(crate) fn is_debugging() -> bool {
     false
 }
 
