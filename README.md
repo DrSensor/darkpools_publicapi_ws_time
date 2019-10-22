@@ -1,4 +1,4 @@
-# Websocket PublicAPI - Time Broadcast
+# Websocket PublicAPI - Time
 
 [![Build Status](https://travis-ci.com/darkpools/darkpools_publicapi_ws_time.svg?branch=master)](https://travis-ci.com/darkpools/darkpools_publicapi_ws_time)
 
