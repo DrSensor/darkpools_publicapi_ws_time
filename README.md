@@ -86,12 +86,6 @@ Lints
 ./run.sh lint
 ```
 
-Memory leak check
-
-```text
-./run.sh memcheck
-```
-
 Dependencies audit
 
 ```text
