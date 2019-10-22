@@ -63,7 +63,7 @@ Development setup
   - Environment Key is **SERVICE_PATH**
   - Default value is **/ws/public/time**
 - Fastest interval between 2 ping originating from client, the client will get disconnected if too fast
-  - Environment Key is **PING_LIMIT_MS**
+  - Environment Key is **RAPID_REQUEST_LIMIT_MS**
   - Default value is **1000**
 
 ### Running with script

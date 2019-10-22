@@ -27,7 +27,7 @@ set_default_env     BLAST_INTERVAL_MS       1000
 set_default_env     SERVICE_IP              "0.0.0.0"
 set_default_env     SERVICE_PORT            4000
 set_default_env     SERVICE_PATH            "/ws/public/time"
-set_default_env     PING_LIMIT_MS           1000
+set_default_env     RAPID_REQUEST_LIMIT_MS  1000
 
 # Cargo run switch
 case "$1" in

@@ -8,7 +8,7 @@ const ENV_BLAST_INTERVAL_MS: &str = "BLAST_INTERVAL_MS";
 const ENV_SERVICE_IP: &str = "SERVICE_IP";
 const ENV_SERVICE_PORT: &str = "SERVICE_PORT";
 const ENV_SERVICE_PATH: &str = "SERVICE_PATH";
-const ENV_PING_LIMIT_MS: &str = "PING_LIMIT_MS";
+const ENV_RAPID_REQUEST_LIMIT_MS: &str = "RAPID_REQUEST_LIMIT_MS";
 
 #[cfg(debug_assertions)]
 pub(crate) fn is_debugging() -> bool {
@@ -28,7 +28,7 @@ pub(crate) struct ServiceConfig {
     pub blast_interval: Duration,
     pub service_baseurl: String,
     pub service_path: String,
-    pub ping_limit_duration: Duration,
+    pub rapid_request_interval: Duration,
 }
 
 impl Default for ServiceConfig {
@@ -42,8 +42,8 @@ impl Default for ServiceConfig {
             get_mandatory_env_int(ENV_SERVICE_PORT)
         );
         let service_path = get_mandatory_env_string(ENV_SERVICE_PATH);
-        let ping_limit_duration =
-            Duration::from_millis(get_mandatory_env_int(ENV_PING_LIMIT_MS) as u64);
+        let rapid_request_interval =
+            Duration::from_millis(get_mandatory_env_int(ENV_RAPID_REQUEST_LIMIT_MS) as u64);
         Self {
             debug_build: is_debugging(),
             executable_name: get_executable_name(),
@@ -51,7 +51,7 @@ impl Default for ServiceConfig {
             blast_interval,
             service_baseurl,
             service_path,
-            ping_limit_duration,
+            rapid_request_interval,
         }
     }
 }
@@ -71,18 +71,18 @@ mod unit_tests {
         let bind_path = "/public/time";
         let bind_baseurl = format!("{}:{}", bind_ip, bind_port);
         let blast_interval = Duration::from_millis(blast_interval_ms);
-        let ping_limit_duration = Duration::from_millis(ping_limit_ms);
+        let rapid_request_interval = Duration::from_millis(ping_limit_ms);
         env::set_var(ENV_MAX_CLIENT, max_clients.to_string());
         env::set_var(ENV_BLAST_INTERVAL_MS, blast_interval_ms.to_string());
         env::set_var(ENV_SERVICE_IP, bind_ip);
         env::set_var(ENV_SERVICE_PORT, bind_port.to_string());
         env::set_var(ENV_SERVICE_PATH, bind_path);
-        env::set_var(ENV_PING_LIMIT_MS, ping_limit_ms.to_string());
+        env::set_var(ENV_RAPID_REQUEST_LIMIT_MS, ping_limit_ms.to_string());
         let config: ServiceConfig = Default::default();
         assert_eq!(config.max_clients, max_clients);
         assert_eq!(config.blast_interval, blast_interval);
         assert_eq!(config.service_baseurl, bind_baseurl);
         assert_eq!(config.service_path, bind_path);
-        assert_eq!(config.ping_limit_duration, ping_limit_duration);
+        assert_eq!(config.rapid_request_interval, rapid_request_interval);
     }
 }
