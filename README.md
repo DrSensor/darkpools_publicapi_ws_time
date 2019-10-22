@@ -47,7 +47,7 @@ Development setup
 
 ### Configuration (via Environment)
 
-- Maximum cient count for this service to handle, new client(s) beyond this limit will be rejected during handshake
+- Maximum client count for this service to handle, new client(s) beyond this limit will be rejected during handshake
   - Environment Key is **MAX_CLIENT**
   - Default value is **16384**
 - Interval in milliseconds for periodic server time broadcast
