@@ -6,7 +6,7 @@ Copyright (C) 2019 Bitwyre Technologies LLC
 
 ## API Usages
 
-This websocket service doesn't have TLS enabled nor cross-origin checking, it is suppose to be handled by intermediary proxy.
+This websocket service doesn't have TLS enabled nor cross-origin checking, it is suppose to be handled by an intermediary proxy.
 
 Example using [websocat](https://github.com/vi/websocat):
 
@@ -27,7 +27,7 @@ Message anatomy:
 
 - Structure name will always be "time"
 - "unixtime" will be in nanoseconds
-- "rfc3339" is the time format (in strings) in RFC-3339
+- "rfc3339" is the time format (in strings) in RFC3339
 
 ## Development
 

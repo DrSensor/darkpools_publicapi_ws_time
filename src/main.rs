@@ -31,7 +31,7 @@ fn main() -> IOResult<()> {
                 binding_path: CONFIG.service_path.clone(),
                 max_clients: CONFIG.max_clients as usize,
                 periodic_interval: CONFIG.blast_interval,
-                rapid_request_interval: CONFIG.rapid_request_interval,
+                rapid_request_limit: CONFIG.rapid_request_limit,
                 periodic_message_getter: Arc::new(&create_server_time_message),
             });
     }

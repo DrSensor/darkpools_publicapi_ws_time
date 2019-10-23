@@ -28,7 +28,7 @@ pub(crate) struct ServiceConfig {
     pub blast_interval: Duration,
     pub service_baseurl: String,
     pub service_path: String,
-    pub rapid_request_interval: Duration,
+    pub rapid_request_limit: Duration,
 }
 
 impl Default for ServiceConfig {
@@ -42,7 +42,7 @@ impl Default for ServiceConfig {
             get_mandatory_env_int(ENV_SERVICE_PORT)
         );
         let service_path = get_mandatory_env_string(ENV_SERVICE_PATH);
-        let rapid_request_interval =
+        let rapid_request_limit =
             Duration::from_millis(get_mandatory_env_int(ENV_RAPID_REQUEST_LIMIT_MS) as u64);
         Self {
             debug_build: is_debugging(),
@@ -51,7 +51,7 @@ impl Default for ServiceConfig {
             blast_interval,
             service_baseurl,
             service_path,
-            rapid_request_interval,
+            rapid_request_limit,
         }
     }
 }
@@ -71,7 +71,7 @@ mod unit_tests {
         let bind_path = "/public/time";
         let bind_baseurl = format!("{}:{}", bind_ip, bind_port);
         let blast_interval = Duration::from_millis(blast_interval_ms);
-        let rapid_request_interval = Duration::from_millis(ping_limit_ms);
+        let rapid_request_limit = Duration::from_millis(ping_limit_ms);
         env::set_var(ENV_MAX_CLIENT, max_clients.to_string());
         env::set_var(ENV_BLAST_INTERVAL_MS, blast_interval_ms.to_string());
         env::set_var(ENV_SERVICE_IP, bind_ip);
@@ -83,6 +83,6 @@ mod unit_tests {
         assert_eq!(config.blast_interval, blast_interval);
         assert_eq!(config.service_baseurl, bind_baseurl);
         assert_eq!(config.service_path, bind_path);
-        assert_eq!(config.rapid_request_interval, rapid_request_interval);
+        assert_eq!(config.rapid_request_limit, rapid_request_limit);
     }
 }
