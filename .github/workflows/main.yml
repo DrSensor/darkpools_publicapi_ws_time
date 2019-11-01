@@ -1,0 +1,112 @@
+name: Build on push, Publish on tag
+
+on:
+  push:
+    tags: ["v?[0-9]+.[0-9]+.[0-9]+*"]
+    push: ["**"]
+
+jobs:
+  build:
+    if: "!contains(github.event.commits[0].message, '[skip ci]')"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+          - { os: ubuntu-latest, arch: x86_64-unknown-linux-musl }
+          - { os: windows-latest, arch: x86_64-pc-windows-msvc }
+          - { os: macOS-latest, arch: x86_64-apple-darwin }
+    steps:
+      - uses: actions/checkout@master
+      - run: rustup target add ${{ matrix.arch }}
+      - name: compile for specific target
+        continue-on-error: matrix.os != ubuntu-latest
+        run: |-
+          cargo build --target ${{ matrix.arch }} --release
+          # leave only the executable file
+          rm -rd target/${{ matrix.arch }}/release/{*/*,*.d,*.rlib,.fingerprint}
+          find . -empty -delete
+      - uses: actions/upload-artifact@master
+        with:
+          name: ${{ matrix.arch }}
+          path: target/${{ matrix.arch }}/release
+
+  release:
+    name: Upload to github release
+    if: contains(github.ref, 'refs/tags')
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        arch:
+          - x86_64-unknown-linux-musl
+          - x86_64-pc-windows-msvc
+          - x86_64-apple-darwin
+        include:
+          - { arch: x86_64-pc-windows-msvc, ext: .exe }
+    steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: ${{ matrix.arch }}
+          path: target/${{ matrix.arch }}/release
+      - uses: actions/create-release@master
+        id: create_release
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        continue-on-error: true
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: true
+      - uses: actions/upload-release-asset@master
+        id: create_release
+        env: { GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}" }
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/${{ matrix.arch }}/release/darkpools_publicapi_ws_pairs${{ matrix.ext }}
+          asset_name: darkpools-publicapi-ws-pairs-${{ matrix.arch }}${{ matrix.ext }}
+          asset_content_type: application/octet-stream
+
+  docker:
+    name: Build and publish docker images
+    if: contains(github.ref, 'refs/tags') || contains(github.ref, 'refs/heads/master')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/download-artifact@master
+        with:
+          name: x86_64-unknown-linux-musl
+          path: target/release
+      - name: Build and publish nightly version
+        if: contains(github.ref, 'refs/heads/master')
+        run: |-
+          REGISTRY=${REGISTRY,,}
+
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ${REGISTRY%/*} -u ${USER,,} --password-stdin
+          docker build . --tag ${REGISTRY}:nightly
+          docker push ${REGISTRY}:nightly
+        env:
+          REGISTRY: docker.pkg.github.com/${{ github.repository }}
+          USER: ${{ github.actor }}
+
+      #region semantics tagging
+      - name: Retag and push latest version
+        if: contains(github.ref, 'refs/tags')
+        run: |-
+          VERSION=${GITHUB_REF##*/}
+
+          # ${latest features} ${latest patch} ${exact version}
+          tags=( ${VERSION%%.*} ${VERSION%.*} ${VERSION} )
+
+          for tag in ${tags[@]}; do
+            docker tag ${REGISTRY,,}:nightly ${REGISTRY,,}:${tag}
+            docker push ${REGISTRY,,}:${tag}
+          done
+
+          # latest version
+          docker tag ${REGISTRY,,}:nightly ${REGISTRY,,}:latest
+          docker push ${REGISTRY,,}:latest
+        env:
+          REGISTRY: docker.pkg.github.com/${{ github.repository }}
+    #endregion semantics tagging
